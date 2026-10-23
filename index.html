@@ -67,7 +67,7 @@
           Exam Papers with Diagrams, NEP Lessons & <span class="gold-text">Compliance Tools.</span>
         </h1>
         <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
-          Built for Classes 3 to 12. Generate bilingual question papers with crisp SVG Diagrams, suggested YouTube links, and marking schemes.
+          Built for Classes 3 to 12. Generate bilingual question papers with crisp SVG Diagrams, suggested YouTube links, and complete marking schemes.
         </p>
       </div>
       <div class="lg:col-span-5">
@@ -92,22 +92,47 @@
 
           <div>
             <label class="block text-xs font-bold uppercase text-slate-300 mb-1">1. School / Coaching Header Name</label>
-            <input type="text" id="tch-school" value="Your School Name" oninput="generateTeacherContent(false)" class="w-full bg-navy-900 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white focus:border-gold-500 outline-none" />
+            <input type="text" id="tch-school" value="Your School Name" oninput="generateTeacherContent()" class="w-full bg-navy-900 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white focus:border-gold-500 outline-none" />
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold uppercase text-slate-300 mb-1">2. Board Framework</label>
-              <select id="tch-board" onchange="generateTeacherContent(false)" class="w-full bg-navy-900 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm text-white">
-                <option value="CBSE">CBSE</option>
-                <option value="CISCE">ICSE / ISC</option>
+              <select id="tch-board" onchange="generateTeacherContent()" class="w-full bg-navy-900 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm text-white">
+                <option value="CBSE">CBSE (2026-27 Spec)</option>
+                <option value="ICSE">ICSE / ISC</option>
                 <option value="State Board">State Board (NEP)</option>
               </select>
             </div>
             <div>
               <label class="block text-xs font-bold uppercase text-gold-400 mb-1">3. Class & Stream (3–12)</label>
-              <select id="tch-class" onchange="generateTeacherContent(false)" class="w-full bg-navy-900 border border-gold-500/60 rounded-lg px-3 py-2 text-xs sm:text-sm text-white">
-                <option value="Class 10" selected>Class 10 (Secondary)</option>
+              <select id="tch-class" onchange="onClassStageChange()" class="w-full bg-navy-900 border border-gold-500/60 rounded-lg px-3 py-2 text-xs sm:text-sm text-white">
+                <optgroup label="Preparatory Stage (Classes 3–5)">
+                  <option value="Class 3">Class 3</option>
+                  <option value="Class 4">Class 4</option>
+                  <option value="Class 5">Class 5</option>
+                </optgroup>
+                <optgroup label="Middle Stage (Classes 6–8)">
+                  <option value="Class 6">Class 6</option>
+                  <option value="Class 7">Class 7</option>
+                  <option value="Class 8">Class 8</option>
+                </optgroup>
+                <optgroup label="Secondary Board (Classes 9–10)">
+                  <option value="Class 9">Class 9</option>
+                  <option value="Class 10" selected>Class 10 (Board Spec)</option>
+                </optgroup>
+                <optgroup label="Sr. Secondary — Science Stream">
+                  <option value="Class 11 (Science)">Class 11 — Science</option>
+                  <option value="Class 12 (Science)">Class 12 — Science</option>
+                </optgroup>
+                <optgroup label="Sr. Secondary — Commerce Stream">
+                  <option value="Class 11 (Commerce)">Class 11 — Commerce</option>
+                  <option value="Class 12 (Commerce)">Class 12 — Commerce</option>
+                </optgroup>
+                <optgroup label="Sr. Secondary — Humanities / Arts">
+                  <option value="Class 11 (Humanities)">Class 11 — Humanities</option>
+                  <option value="Class 12 (Humanities)">Class 12 — Humanities</option>
+                </optgroup>
               </select>
             </div>
           </div>
@@ -115,13 +140,18 @@
           <div class="grid grid-cols-2 gap-3">
             <div>
               <label class="block text-xs font-bold uppercase text-gold-400 mb-1">4. Subject</label>
-              <select id="tch-subject" onchange="generateTeacherContent(false)" class="w-full bg-navy-900 border border-gold-500/60 rounded-lg px-3 py-2 text-xs sm:text-sm text-white">
-                <option value="Science" selected>Science</option>
+              <select id="tch-subject" onchange="updateDefaultTopic(); generateTeacherContent();" class="w-full bg-navy-900 border border-gold-500/60 rounded-lg px-3 py-2 text-xs sm:text-sm text-white font-semibold">
+                <option value="Science" selected>Science (Phy/Chem/Bio)</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Social Science">Social Science</option>
+                <option value="English">English</option>
+                <option value="Hindi">Hindi</option>
+                <option value="AI & CT">Artificial Intelligence & CT</option>
               </select>
             </div>
             <div>
               <label class="block text-xs font-bold uppercase text-slate-300 mb-1">5. Language Mode</label>
-              <select id="tch-lang" onchange="generateTeacherContent(false)" class="w-full bg-navy-900 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm text-white">
+              <select id="tch-lang" onchange="generateTeacherContent()" class="w-full bg-navy-900 border border-slate-700 rounded-lg px-3 py-2 text-xs sm:text-sm text-white">
                 <option value="Bilingual" selected>Bilingual (English + Hindi)</option>
                 <option value="English">English Only</option>
               </select>
@@ -130,10 +160,10 @@
 
           <div>
             <label class="block text-xs font-bold uppercase text-slate-300 mb-1">6. Chapter / Concept Topic</label>
-            <input type="text" id="tch-topic" value="Light: Reflection and Refraction" oninput="generateTeacherContent(false)" class="w-full bg-navy-900 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white focus:border-gold-500 outline-none" />
+            <input type="text" id="tch-topic" value="Light: Reflection and Refraction" oninput="generateTeacherContent()" class="w-full bg-navy-900 border border-slate-700 rounded-lg px-3.5 py-2 text-sm text-white focus:border-gold-500 outline-none" />
           </div>
 
-          <button onclick="generateTeacherContent(false)" class="w-full gold-gradient text-navy-950 font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg hover:opacity-95 transition">
+          <button onclick="generateTeacherContent()" class="w-full gold-gradient text-navy-950 font-extrabold py-3 rounded-xl text-xs uppercase tracking-wider shadow-lg hover:opacity-95 transition">
             <i class="fa-solid fa-bolt"></i> Instant Synthesize Sheet
           </button>
 
@@ -168,7 +198,6 @@
     </div>
   </section>
 
-  <!-- 30-Day Pilot Activation Modal (Replaces UPI Flow) -->
   <div id="checkout-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-navy-800 border-2 border-gold-500 rounded-2xl max-w-md w-full p-6 text-center relative">
       <button onclick="document.getElementById('checkout-modal').classList.add('hidden')" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
@@ -183,12 +212,72 @@
   <script>
     let isProUnlocked = false;
 
-    window.addEventListener('DOMContentLoaded', () => {
-      if (localStorage.getItem('alok_pro_unlocked') === 'true') {
-        isProUnlocked = true;
+    const STAGE_SUBJECTS = {
+      'prep': [
+        { val: 'Mathematics', label: 'Mathematics', topic: 'Fractions & Number Patterns' },
+        { val: 'Science', label: 'EVS / The World Around Us', topic: 'Water Cycle & Plants' },
+        { val: 'English', label: 'English', topic: 'Reading Comprehension' },
+        { val: 'Hindi', label: 'Hindi', topic: 'अपठित गद्यांश एवं चित्र वर्णन' }
+      ],
+      'middle': [
+        { val: 'Science', label: 'Science', topic: 'Electric Current & Motion' },
+        { val: 'Mathematics', label: 'Mathematics', topic: 'Linear Equations & Mensuration' },
+        { val: 'Social Science', label: 'Social Science', topic: 'Resources & Constitution' },
+        { val: 'English', label: 'English', topic: 'Grammar & Composition' }
+      ],
+      'sec': [
+        { val: 'Science', label: 'Science (Physics/Chem/Bio)', topic: 'Light: Reflection and Refraction' },
+        { val: 'Mathematics', label: 'Mathematics', topic: 'Quadratic Equations & Geometry' },
+        { val: 'Social Science', label: 'Social Science', topic: 'Federalism & Nationalism' },
+        { val: 'AI & CT', label: 'Artificial Intelligence & CT', topic: 'AI Project Cycle & Ethics' },
+        { val: 'English', label: 'English', topic: 'Analytical Paragraph & Extracts' },
+        { val: 'Hindi', label: 'Hindi', topic: 'रचनात्मक लेखन एवं व्याकरण' }
+      ],
+      'sr_sci': [
+        { val: 'Science', label: 'Physics / Chemistry / Bio', topic: 'Ray Optics & Electrostatics' },
+        { val: 'Mathematics', label: 'Mathematics', topic: 'Calculus & Vectors' },
+        { val: 'AI & CT', label: 'Computer Science & AI', topic: 'Python Functions & SQL' }
+      ],
+      'sr_com': [
+        { val: 'Commerce', label: 'Accountancy & Business Studies', topic: 'Cash Flow Statements & Partnership' },
+        { val: 'Economics', label: 'Economics', topic: 'Market Equilibrium & National Income' }
+      ],
+      'sr_hum': [
+        { val: 'Social Science', label: 'History / Pol Science / Geo', topic: 'Constitutional Framework & Globalisation' }
+      ]
+    };
+
+    function getStageKey(clsVal) {
+      if (clsVal.includes('3') || clsVal.includes('4') || clsVal.includes('5')) return 'prep';
+      if (clsVal.includes('6') || clsVal.includes('7') || clsVal.includes('8')) return 'middle';
+      if (clsVal.includes('Science')) return 'sr_sci';
+      if (clsVal.includes('Commerce')) return 'sr_com';
+      if (clsVal.includes('Humanities')) return 'sr_hum';
+      return 'sec';
+    }
+
+    function onClassStageChange() {
+      const clsVal = document.getElementById('tch-class').value;
+      const stageKey = getStageKey(clsVal);
+      const list = STAGE_SUBJECTS[stageKey] || STAGE_SUBJECTS['sec'];
+      const subSel = document.getElementById('tch-subject');
+      subSel.innerHTML = list.map((item, idx) => `<option value="${item.val}" data-topic="${item.topic}" ${idx===0?'selected':''}>${item.label}</option>`).join('');
+      updateDefaultTopic();
+      generateTeacherContent();
+    }
+
+    function updateDefaultTopic() {
+      const subSel = document.getElementById('tch-subject');
+      const opt = subSel.options[subSel.selectedIndex];
+      if (opt && opt.getAttribute('data-topic')) {
+        document.getElementById('tch-topic').value = opt.getAttribute('data-topic');
       }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('alok_pro_unlocked') === 'true') isProUnlocked = true;
       syncUnlockUI();
-      generateTeacherContent(false);
+      generateTeacherContent();
     });
 
     function syncUnlockUI() {
@@ -203,27 +292,30 @@
     function generateTeacherContent() {
       const topic = document.getElementById('tch-topic').value || "Core Concept";
       const school = document.getElementById('tch-school').value || "Your School Name";
+      const cls = document.getElementById('tch-class').value;
+      const subject = document.getElementById('tch-subject').value;
       const isBilingual = document.getElementById('tch-lang').value === 'Bilingual';
       const printedHeader = isProUnlocked ? school : `${school} [PREVIEW]`;
 
       let html = `
         <div class="border-b-2 border-slate-900 pb-3 mb-4">
           <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 uppercase mt-0.5">${printedHeader}</h3>
-          <p class="text-xs font-semibold text-slate-600">Class 10 &bull; Science &bull; Unit: ${topic}</p>
+          <p class="text-xs font-semibold text-slate-600">${cls} &bull; ${subject} &bull; Unit: ${topic}</p>
         </div>
         <div class="space-y-3.5 text-xs text-slate-800">
-          <p><strong>Q1.</strong> Observe the concept of <strong>${topic}</strong>. Which inference is correct? [1 Mark]</p>
-          ${isBilingual ? `<p class="text-[11px] text-slate-600"><strong>प्रश्न 1.</strong> <strong>${topic}</strong> की अवधारणा का अवलोकन करें। कौन सा निष्कर्ष सही है?</p>` : ''}
+          <p><strong>Q1.</strong> Observe the competency framework for <strong>${topic}</strong> under ${subject}. Which inference is scientifically valid? [1 Mark]</p>
+          ${isBilingual ? `<p class="text-[11px] text-slate-600"><strong>प्रश्न 1.</strong> <strong>${topic}</strong> के अंतर्गत वैज्ञानिक वैधीकरण का कौन सा निष्कर्ष सही है?</p>` : ''}
           
           <div class="mt-4 p-4 rounded-lg bg-emerald-50/70 border border-emerald-400">
-            <div class="text-xs font-extrabold text-emerald-900 mb-1">✅ Preview Solution</div>
-            <p class="text-xs text-slate-800">Q1 Solution: The measured output varies systematically.</p>
+            <div class="text-xs font-extrabold text-emerald-900 mb-1">✅ Preview Solution (Q1)</div>
+            <p class="text-xs text-slate-800">Correct Answer: The observed parameters correlate directly with standard governing principles.</p>
           </div>
 
           <div class="mt-3 p-4 rounded-lg bg-amber-50 border-2 border-amber-400 relative">
-            <div class="font-bold text-amber-900 text-xs uppercase mb-1.5">🔒 Advanced Marking Scheme</div>
-            <div class="${!isProUnlocked ? 'blurred-section' : 'unblurred'}">
-              <p>Step-by-step derivation and detailed rubrics go here.</p>
+            <div class="font-bold text-amber-900 text-xs uppercase mb-1.5">🔒 Advanced Marking Scheme & Case Studies</div>
+            <div class="${!isProUnlocked ? 'blurred-section' : 'unblurred'} space-y-2">
+              <p><strong>Q2 Derivation & Step-by-Step Rubric (3 Marks):</strong> Complete verification steps, formula application, and unit analysis.</p>
+              <p><strong>Q3 Case Study (4 Marks):</strong> Real-world application challenge with structured evaluation points.</p>
             </div>
             ${!isProUnlocked ? `
               <div class="absolute inset-0 flex flex-col items-center justify-center bg-white/80 p-4 text-center rounded-lg">
@@ -234,7 +326,7 @@
           
           <div class="mt-4 p-3.5 rounded-lg bg-slate-100 border border-slate-300">
             <div class="text-xs font-extrabold uppercase text-slate-900 mb-2">📺 Suggested YouTube Searches</div>
-            <p class="text-[11px]">Search: "NCERT Class 10 Science ${topic} explanation"</p>
+            <p class="text-[11px]">Search: "NCERT ${cls} ${subject} ${topic} official explanation"</p>
           </div>
         </div>`;
       document.getElementById('teacher-output').innerHTML = html;
