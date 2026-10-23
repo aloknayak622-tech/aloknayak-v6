@@ -1,0 +1,13 @@
+{
+ "name": "10x-educator-api",
+ "version": "0.4.0",
+ "private": true,
+ "engines": {
+  "node": ">=18"
+ },
+ "scripts": {
+  "test": "node test/phase1.test.js && node test/phase2.test.js && node test/phase3.test.js && node test/phase4.test.js",
+  "dev": "node dev.js",
+  "check": "node scripts/check.js"
+ }
+}

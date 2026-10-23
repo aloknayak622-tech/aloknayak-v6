@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Question review</title>
+<style>body{font:16px/1.5 system-ui,sans-serif;max-width:800px;margin:auto;padding:16px}.c{border:1px solid #ccc;border-radius:10px;padding:12px;margin:12px 0}textarea,input,select{width:100%;font:inherit;margin:3px 0;padding:6px;box-sizing:border-box}.f{color:#b91c1c;font-weight:600}.o{color:#0a7d3c}.m{color:#666;font-size:.9rem}button{font:inherit;padding:8px 14px;margin:4px 8px 0 0}</style></head><body>
+<h1>Question review</h1><p><input id="k" type="password" placeholder="Your reviewer key" style="width:auto"> <button id="go">Sign in</button></p>
+<details class="c"><summary>Check before approving</summary><ul><li>Is the answer correct? Work it out yourself.</li><li>Exactly one correct option (for MCQs)?</li><li>Original wording, not copied from a textbook or past paper?</li><li>Right difficulty for the class?</li></ul></details>
+<details class="c"><summary>Generate new questions (uses AI credit)</summary><input id="gs" placeholder="Subject id, e.g. class10-chemistry"><input id="gg" type="number" placeholder="Class (3-12)"><input id="gc" placeholder="Chapter, e.g. Acids, Bases and Salts"><select id="gm"><option>1</option><option>2</option><option>3</option><option>4</option></select><input id="gn" type="number" value="5" min="1" max="8"><button id="gb">Generate</button></details>
+<p id="st" class="m"></p><div id="list"></div>
+<script>
+const $=s=>document.querySelector(s),el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+let key=sessionStorage.getItem('rk')||'';if(key)$('#k').value=key;
+async function call(p,b){const r=await fetch('/api/'+p,{method:b?'POST':'GET',headers:{Authorization:'Bearer '+key,...(b&&{'Content-Type':'application/json'})},body:b&&JSON.stringify(b)});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||'Error '+r.status);return j}
+const inp=v=>{const i=el('input');i.value=v;return i},ta=v=>{const t=el('textarea');t.value=v;t.rows=3;return t};
+function card(it){const c=el('div','c'),dis=it.auto.solve==='disagree';c.append(el('div','m',it.id+' · Class '+it.grade+' · '+it.subject+' · '+it.chapter+' · '+it.marks+' mark(s)'),
+  el('div',dis?'f':'o',dis?'AI solver DISAGREED with this key. Work it out carefully.':it.auto.solve==='agree'?'AI solver agreed (a second opinion, not proof).':'AI check was not possible for this item.'));
+  const q=ta(it.q),k=ta(it.key),fin=inp(it.final||''),os=(it.opts||[]).map(inp),ans=el('select');
+  'abcd'.split('').forEach(l=>{const o=el('option','',l);o.value=l;ans.append(o)});ans.value=it.ans||'a';
+  c.append(q,...os);c.append(it.marks===1?ans:fin,k);
+  const conf=el('input');conf.type='checkbox';const cl=el('label','',' I worked this out myself and the key is right');cl.prepend(conf);if(dis)c.append(cl);
+  const mk=a=>{const b=el('button','',a==='approve'?'Approve':'Reject');b.onclick=async()=>{try{await call('admin-review',{id:it.id,action:a,confirmFlagged:conf.checked,edits:{q:q.value,key:k.value,final:fin.value,...(it.marks===1&&{opts:os.map(o=>o.value),ans:ans.value})}});c.remove()}catch(e){$('#st').textContent=e.message}};return b};
+  c.append(mk('approve'),mk('reject'));return c}
+async function load(){try{const r=await call('admin-list?status=pending');$('#list').replaceChildren(...r.items.map(card));$('#st').textContent=r.items.length+' waiting for review.'}catch(e){$('#st').textContent=e.message}}
+$('#go').onclick=()=>{key=$('#k').value.trim();sessionStorage.setItem('rk',key);load()};
+$('#gb').onclick=async()=>{$('#st').textContent='Generating… this can take a minute.';try{const r=await call('admin-generate',{subject:$('#gs').value.trim(),grade:+$('#gg').value,chapter:$('#gc').value.trim(),marks:+$('#gm').value,count:+$('#gn').value});$('#st').textContent='Added '+r.added+' ('+r.flagged+' flagged). Rejected '+r.rejected+', duplicates '+r.duplicate+'.';load()}catch(e){$('#st').textContent=e.message}};
+if(key)load();
+</script></body></html>
